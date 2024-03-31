@@ -10,6 +10,8 @@ using UnityEngine.XR.Interaction.Toolkit.Transformers;
 public class Placement : MonoBehaviour
 {
     [SerializeField] List<GameObject> ObjectToSpawon;
+    [SerializeField] GameObject CharcterController;
+    [SerializeField] GameObject ParticalSystem;
     [SerializeField] GameObject DeleteButton;
     [SerializeField] GameObject SelectButton;
     [SerializeField] GameObject RayPoint;
@@ -39,6 +41,7 @@ public class Placement : MonoBehaviour
     }
     IEnumerator StartScan()
     {
+        CharcterController.SetActive(false);
         SelectButton.SetActive(false);
         Content.gameObject.SetActive(false);
         RayPoint.SetActive(false);
@@ -57,6 +60,13 @@ public class Placement : MonoBehaviour
                 m_SelectedObject = raycastHit.transform.gameObject;
                 EditObject.SetActive(true);
                 SpownObject.SetActive(false);
+                CharcterController.SetActive(false);
+            }
+            if(raycastHit.transform.tag == "Charcter")
+            {
+                EditObject.SetActive(false);
+                SpownObject.SetActive(false);
+                CharcterController.SetActive(true);
             }
         }
     }
@@ -99,6 +109,8 @@ public class Placement : MonoBehaviour
     {
         if(Physics.Raycast(ARCamera.transform.position, ARCamera.transform.forward, out raycastHit, MaxRayDistance))
         {
+            GameObject m_ParticalSystem = Instantiate(ParticalSystem, raycastHit.point, Quaternion.identity);
+            Destroy(m_ParticalSystem, 2f);
             GameObject m_object = Instantiate(obj, raycastHit.point, Quaternion.identity);
             m_object.AddComponent<ARTransformer>();
             ObjectAlreadySpown.Add(m_object);
